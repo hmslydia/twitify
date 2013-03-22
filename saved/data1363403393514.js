@@ -1,0 +1,1 @@
+data = {"discussions":{"0":{"jokeId":0,"text":"omg jk lold","updates":["222","232323",{"time":1363403375035,"username":""}]},"1":{"jokeId":1,"text":"Cats and dogs","updates":["123","456"]},"2":{"jokeId":2,"text":"d","updates":[{"time":1363403391307,"username":""}]},"3":{"jokeId":3,"text":"","updates":[]}}}

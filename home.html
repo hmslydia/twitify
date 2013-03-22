@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<script type = "text/javascript" src="http://abstract.cs.washington.edu/~hmslydia/coda/helpers/jquery.js"></script>
+<script type = "text/javascript" src="http://abstract.cs.washington.edu/~hmslydia/coda/helpers/utils.js"></script>
+<script type = "text/javascript" src="http://abstract.cs.washington.edu/~hmslydia/coda/helpers/json2.js"></script>
+
+<script type = "text/javascript" src="utils.js"></script>
+<script type = "text/javascript" src="textSearch.js"></script>
+<script type = "text/javascript" src="twitterFeed.js"></script>
+<script type = "text/javascript" src="saveAndDisplayJokes.js"></script>
+
+<script type = "text/javascript" src="jokes.js"></script>
+
+<style type="text/css">
+body {
+    max-width: 960px;
+    padding: 0em 1em 1em 1em;
+    background-color: #f5f5ed;
+    color: #253842;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#message{
+	color: black;
+    padding: .5em;
+    background-color: #d4b4b4;
+    border-radius: 10px;
+}
+
+#mainContent {
+    float: right;
+    width: 68%;
+}
+
+h1, #blurb, #message {
+    text-align: center;
+}
+
+h1 {
+    color: #54758a;
+}
+
+h2, h3, h4 {
+    color: #6fa0ae;
+    margin-bottom: .3em;
+}
+
+#leaderboard {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+#submit {
+    padding: .5em;
+    font-size: 13pt;
+}
+
+#sidebar {
+    float: right;
+    width: 30%;
+    padding-left: 1em;
+}
+
+#leaderboard table {
+    padding-top: 1em;
+}
+
+#leaderboard tr:nth-child(even) {
+    background-color: #d3d6d2;
+}
+
+#leaderboard td {
+    padding-right: 3em;
+}
+
+#login {
+    text-align: center;
+    padding: 1em;
+    background-color: #d4e7e7;
+    margin-top: 2em;
+    border-radius: 10px;
+}
+
+#header {
+    font-style: italic;
+}
+
+#favorites li {
+    padding-bottom: 1em;
+    font-size: 10pt;
+}
+
+#favorites ul {
+    list-style-image: url('http://students.washington.edu/katlyn/star.png');
+}
+
+
+/******************* 
+ New CSS Styles
+ *******************/
+
+#textSearchDiv {
+    min-height: 300px;
+}
+
+#giantTextBox {
+    width: 200px;
+    height: 200px;
+}
+
+</style>
+
+<style type="text/css">
+#textSearchDiv{
+    width: 400px
+}
+
+#memosDiv{
+    width: 400px
+}
+
+.jokeForDisplay{
+    padding:5px;
+    margin: 5px;
+    background-color: #CCCCCC;
+}
+
+.memoForDisplay{
+    padding:5px;
+    margin: 5px;
+    background-color: #CCCCCC;
+}
+
+.highlighted{
+    background-color: #b66666
+}
+
+#saveMemo{
+    width: 400px; 
+    height: 70px;
+}
+</style>
+
+<script type="text/javascript">
+/*
+arr = [1,2,3,3,2,1]
+console.log(arr)
+filteredArr = filterArray(arr, function(x){return x>1})
+console.log(filteredArr)
+
+mappedArr = map(arr, function(x){return x+10})
+console.log(mappedArr)
+*/
+
+var selectedJokeId = -1;
+var twitterFeed = []
+
+function getUserName(){
+	return $("#username").val()
+}
+
+/*
+function hasUserName(){
+	username = getUserName()
+	if (username == ""){
+		alert("please enter your user name and try again")
+		return false
+	}else{
+		return true
+	}
+}
+*/
+
+function ajax(command, result, cb) {    
+    console.log("ajax command: "+command);
+    //console.log(result)
+	result["username"] = getUserName()
+	$.post(document.location.href, { "command" : command, args : JSON.stringify(result) }, cb)
+}
+
+$(document).ready(function(){
+    twitterFeedSetup()
+	textSearchSetup()
+	
+    $("#saveDiscussion").click(function() {
+		storeOldData();  
+		fetchNewJokeForFeed()
+	})
+})
+
+</script>
+<body>
+username: <input type="text" id="username" placeholder="username"></input>
+
+<table>
+    <tr>
+        <td>
+            <div id ="textSearchDiv">
+                TwitterFeed
+                <div class="column" id="twitterFeed"> </div>
+            </div>
+        </td>
+        <td valign="top">
+            
+            <div id="discussionDiv">
+                <textarea rows="5" cols="20" id="giantTextBox">
+                </textarea><br/>
+                <button id="saveDiscussion">Save</button>
+            </div>
+        </td>  
+        <td>
+            <div id ="textSearchDiv">
+                Text Search<input type="text" id="search" /> <input type="submit" id="searchSubmit" />
+                <span id="numResults"> </span>
+                <span id="resultsIdeas"> </span>
+                <div class="column" id="searchResults"> </div>
+            </div>
+        </td>		
+    </tr>
+</table>
+</body>
